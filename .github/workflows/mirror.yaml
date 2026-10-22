@@ -1,0 +1,40 @@
+# Mirrors the client skills from the latest release tag of the repositories
+# that own them (see README): skills/spooler-go and skills/spooler-cli are
+# never edited here. Runs daily, on demand, and on the "mirror" event the
+# release workflows of spooler-go and spooler-cli dispatch (the payload
+# names the repository and tag, for the run log; the script reads the
+# tags itself); commits only when a mirrored skill changed.
+name: Mirror
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [mirror]
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Mirror
+        run: sh scripts/mirror.sh | tee mirrored.txt
+
+      - name: Commit
+        run: |
+          git add skills
+          if git diff --cached --quiet; then
+            echo 'nothing changed'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "skills: mirror $(paste -sd ',' mirrored.txt | sed 's/,/, /g')"
+          git push
