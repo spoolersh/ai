@@ -4,6 +4,11 @@
 # release workflows of spooler-go and spooler-cli dispatch (the payload
 # names the repository and tag, for the run log; the script reads the
 # tags itself); commits only when a mirrored skill changed.
+#
+# The push uses MIRROR_TOKEN, a token with contents write on this
+# repository (the same one the release workflows dispatch with), since the
+# organisation caps the job token at read. The checkout keeps it for the
+# push.
 name: Mirror
 
 on:
@@ -14,7 +19,7 @@ on:
     types: [mirror]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   mirror:
@@ -23,6 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.MIRROR_TOKEN }}
 
       - name: Mirror
         run: sh scripts/mirror.sh | tee mirrored.txt
