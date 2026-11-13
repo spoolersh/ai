@@ -3,7 +3,7 @@ name: spooler-cli
 description: Use the spooler command line tool to work with the Spooler message queue from a shell, a script or an agent. Covers install, connection flags and SPOOLER_* environment variables, every command (send, recv, ack, nack, release, fail, renew, ack-and-send, inspect, recover, discard, messages, queues, stats), lease files, output formats (-o json, table, text, csv), exit codes and script patterns. Use when a task runs the spooler binary, mentions spooler-cli, SPOOLER_API_KEY, a lease file, or needs to send, receive or triage Spooler messages without writing code.
 metadata:
   author: spoolersh
-  version: v0.3.0
+  version: v0.3.1
   docs: https://github.com/spoolersh/spooler-cli
 ---
 
@@ -57,11 +57,11 @@ Flags go before the command; each has an environment twin, and the flag wins:
 | `--queue`, `-q` | `SPOOLER_QUEUE` | required where the operation names a queue |
 | `--profile`, `-p` | `SPOOLER_PROFILE` | profile from `~/.config/spooler/config.yaml` (`--config`, `-C`) |
 
-Local image, free for development and testing (any key, one spool `default`,
-nothing persists):
+Local image, free to run yourself (any key, one spool `default`, nothing
+persists):
 
 ```sh
-docker run --rm -p 127.0.0.1:8080:8080 spoolersh/memspoold
+docker run --rm -p 127.0.0.1:8080:8080 spoolersh/memspoolerd
 export SPOOLER_HOST=127.0.0.1:8080 SPOOLER_NO_TLS=true SPOOLER_API_KEY=local SPOOLER_SPOOL=default
 ```
 
